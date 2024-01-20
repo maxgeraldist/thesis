@@ -1,0 +1,84 @@
+\documentclass[12pt]{report}
+\usepackage{times}
+\usepackage{amsmath}
+\usepackage[authordate]{biblatex-chicago}
+\usepackage{sidenotes}
+\usepackage{microtype}
+\usepackage{titlesec}
+\titleformat{\section}
+  {\normalfont\Large\bfseries} % format
+  {\thesection.} % label
+  {1em} % sep
+  {} % before-code
+\renewcommand{\thesection}{\arabic{section}}
+
+\addbibresource{Thesis_Proposal_Bibliography.bib}  % Imports bibliography file
+\title{Thesis Proposal}
+\author{Maxim Efimov}
+
+\begin{document}
+\maketitle
+
+\section{Introduction}
+
+Real estate markets are as old as the human civilisation itself, but with new technological advancements, they were able to become more open and transparent, more standardised and sophisticated than ever. Modern rental and house sale listing websites include a vast variety of metrics, from internal, propriety metrics like the Zillow price estimation score “Zestimate”, to third-party metrics like the “walkability score”, to landlord- and tenant-submitted information like the exact contract details and user reviews. At the same time, the manifold increases in semiconductors’ computational power, as well as the gradual improvements in data analyses algorithms allow us to analyse the data in more sophisticated ways, untangling at times non-linear relations or non-obvious interactions between variables. 
+
+With these technological advancements, it is pertinent to see what type of algorithm is better suited for taking a variety of metrics regarding a given housing unit and predicting its rental cost. The current research is extensive when it comes to use of modern advanced regression techniques on both rental (\cite{neloy2019}) and home-buying (\cite{Shahhosseini2001}) prices. At the same time, existing models rarely if ever take advantage of the abundance of the modern data, focusing instead on a relatively small number of core characteristics (e.g. square footage, distance from the centre). 
+
+The goals of this paper then will be to see if the neighborhood-related datapoints provided on modern real estate digital platforms provide a significant amount of extra goodness of fit, then see what type of econometrical model – ordinary least squares, random forest or neural networks– takes better advantage of these parameters and provides better fitness on the test sample. The question will consist of two research questions: “Do neighborhood characteristics reliably influence the rental price of housing units?”  with default assumptions stating that they do, and “Which econometric prediction model uses variety of provided data to create a prediction model with the best goodness-of-fit score?”. 
+
+This thesis can provide value by showcasing the strengths and weaknesses of each method and finding out what is the best method for analysis on both the platform, the landlord and the prospective tenant’s side – that is to say, what method one should use to compare a given rental unit against others in the same area.
+\section{Theoretical description of the methods}
+
+Further discussion of the thesis can benefit from describing the methods that will be used. The three methods that will be used are Ordinary Least Squares (OLS), Random Forest and Neural Networks.
+
+Ordinary Least Squares (OLS) is a method of approximating linear functions to data by the principle of least squares – it produces linear functions of outputs of independent variables such, that the squared differences between those outputs and the observed values of the dependent variable is minimal.\footnote{For a recent and detailed discussion of OLS models, see \cite{AstiviaZumbo2019}} The formula for the independent variable is 
+\begin{equation}
+\hat{y} = \beta_0 + \beta_1x_1 + \beta_2x_2 + ... + \beta_nx_n + \epsilon
+\end{equation}
+where $\hat{y}$ is the predicted value of the dependent variable, $\beta_0$ is the intercept, $\beta_1$ to $\beta_n$ are the coefficients of the independent variables, $x_1$ to $x_n$ are the independent variables and $\epsilon$ is the unaccounted error term.
+Perhaps the most widely accepted and used method of statistical analysis in the modern sciences, this method will in many ways serve as a baseline to compare the other two methods with. However, this method is very limited, since only a linear relationship can be explored effectively. Non-linear parameters have to be explicitely anticipated and stated, which is not realistic due to the fact that knowing the precise relationship of each parameter is not possible in real-life applications, and including many in case some are significant would damage the model's effectiveness due to the bias-variance trade-off and multicollinearity potential.
+
+Random forest is an ensemble learning method that uses desicion trees as its base model. The method works by creating a multitude of decision trees at training time and outputting the mean prediction (regression) of the individual trees. The trees provide different predictions from each other, since the algorithm creates a randomly bootstrapped sample for each tree, making it so that each tree is trained on a different sub-sample, effectively with different weights. The algorithm then makes it so that each decision tree is "incomplete" - only some random subset of independent variables is used for each one. These two changes in design of each tree are meant to reduce the variance of the system and make it more resilient to overfitting (\cite{Breiman2001}). The formula for independent variable is 
+\begin{equation}
+\hat{y} = \frac{1}{B}\sum_{b=1}^{B}T(x, \theta_b)
+\end{equation}
+where $T(x, \theta_b)$ is the prediction of the b-th tree, and B is the number of trees in the forest. This method is useful for the same reasons as OLS, but is more flexible, since it can be used for non-linear relationships, and is more resilient to overfitting. However, it is more computationally expensive, and is more difficult to interpret, since the model is effectively a "black box", meaning and the relationship between the independent and dependent variables is not explicitely stated.
+
+Neural networks are a set of algorithms that are designed to recognize patterns - they interpret data by creating neuron-like nodes, labeling or clustering raw input and assigning different weights to the nodes, which represent the different input parameters (\cite{Schmidhuber2015}). The specific model that this paper will use is Scikit-learn’s MLPRegressor from the coding language Python \footnote{For official documentation on the use of Scikit-learn, see \cite{scikit-learn}}. More specifically, this algorithm will be used with Adaptive Moment Estimation (AdaM), which is an extension of stochastic graudual descent (SDG) that adapts each weight's learning rate based on the first and second moment of the gradients (\cite{kingma2017adam}). AdaM will allow us to introduce non-linearity into the model, particularly useful when the relationship between some coefficients is complex, with potential for (perhaps conditional) collinearity and non-linearity. The activation function is Rectified Linear Unit (ReLU), meaning the function will output the value of the neuron directly if it is positive, and zero - otherwise, meaning the function can be expressed as 
+\begin{equation}
+f(x) = max(0, x)
+\end{equation}
+Using ReLU will can help solve the vanishing gradient problem, allowing models to learn faster and perform better - the former useful since while rental listings of a major city can provide a large quantity of data, it does not compare with the amount of data often used to train complex neural networks in commercial applications (\cite{agarap2019deep}). The formula for the independent variable is
+\begin{equation}
+\hat{y} = f(\sum_{i=1}^{n}w_ix_i + b)
+\end{equation}
+where $f$ is the activation function, $w_i$ is the weight of the i-th neuron, $x_i$ is the i-th input, and b is the bias. This process is repeated for each layer of the network, with the output of the previous layer being the input of the next one. The purpose of using a complex machine learning algorythm is to be able to capture the aforementioned complex relationships and incorporate them into the output function, something that OLS and random forest regressions cannot do effectively. This model, too, acts as a "black box", obscuring the nature of the relationship between the inputs and the outputs. Because of that, as long as the much increased complexity of the model compared to OLS and even random forest, the results may be less replicable and reliable.
+
+Before the data is fed into the models, it will be preprocessed. This will include removing outliers, imputing missing values, and normalizing the data. Outliers will be removed using the interquartile range (IQR) method, which removes all values that are more than 1.5 times the IQR below the first quartile or above the third quartile. Missing values will be imputed using the mean of the column. The data will be normalized using the min-max normalization method, which transforms the data to a scale of 0 to 1, using the formula
+\begin{equation}
+x' = \frac{x - min(x)}{max(x) - min(x)}
+\end{equation}
+where $x$ is the original value, and $x'$ is the normalized value. This will be done to make the data more easily interpretable by the models, and to make the models more effective, since the data will be on the same scale. Then, the methods will be applied first on the Monte-Carlo-simulated subsamples of the data to assess the uncertainty in each model's predictions and their robustness -- effectively, the "ballpark" predictions of how each parameter will influence the results and what are the variances in performance for each model. Only then, the models will be applied to the entire dataset and their results will be compared. 
+
+\section{Data}
+This paper will use data, scraped from the website Zillow.com, which is a real estate listing website, that provides a variety of metrics for each listing. The data will be scraped using the Python library Scrapy, and will include metrics of the following types:
+\begin{itemize}
+\item Implicit rental costs such as utilities, parking and pet fees, each in their own parameter
+\item Rental unit's amenities, such as air conditioning, laundry, dishwasher, etc., each in their own parameter
+\item Rental unit's type, such as apartment, condo, house, etc., each in their own parameter
+\item Rental unit's size, such as square footage, number of bedrooms, number of bathrooms, etc., each in their own parameter
+\item Rental unit's location, such as neighborhood, distance from the city centre, etc., each in their own parameter
+\item The unit's neighborhood's characteristics, such as crime rate, school rating, etc., each in their own parameter
+\end{itemize}
+
+\section{Conclusion}
+The purpose of this paper is to explore the relationship between the aforementioned parameters and the rental price of a unit. This will be done by using three different methods -- OLS, random forest and neural networks. The results of each method will be compared to each other, and the most effective one will be chosen. The results of this paper will be useful for both landlords and tenants, since it will allow landlords to better understand the market and set their prices accordingly, and will allow tenants to better understand the market and make more informed decisions about their housing.
+
+The expected results of this paper are that the neural network will be the most effective method, since it is the most complex one, and will be able to capture the complex relationships between the parameters. However, it is also expected that the OLS and random forest will be more easily interpretable, and will be able to provide an estimate of the relationship between the parameters and the rental price, which will be useful for landlords and tenants alike.
+
+The potential challenges of this paper are that the data may not be representative of the entire market, since it is scraped from a single website, and that the data may be incomplete, since it is scraped from a website, and not a database. Additionally, since the paper will use complex and at times, unpredictible regression methods, the results may be overfitted for this specific dataset, or may produce unexpected behaviour due to the specifics of methods chosen. Still, the research provided can be a valueable insight that could reinvigorate the academic discussion on the use of complex algorithms for practical applications; perhaps, further research can be built on the basis of this model to create a complete assessment of each algorithm's place for complex rental data predictions, or commercial solutions may be developed to deliver these methods' value to the customer.
+
+\printbibliography
+
+\end{document}
