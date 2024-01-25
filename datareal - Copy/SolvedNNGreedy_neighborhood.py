@@ -82,12 +82,11 @@ print(f"Mean Squared Error of the residuals: {mse_residuals}")
 with open("NN/neighborhood_NNTuned.txt", "w") as f:
     f.write(f"Mean Squared Error (MSE): {mse}\n")
     f.write(f"R^2 Score: {r2}\n")
-    f.write(f"Best parameters: {parameters}\n")
+    f.write(f"Best parameters: {best_params}\n")
     f.write(f"Predicted values: {y_pred}\n")
     f.write(f"Actual values: {y_test}\n")
     f.write(f"Mean Squared Error of the residuals: {mse_residuals}\n")
     f.write(f"Adjusted R^2 Score: {adj_r2}\n")
-    f.write(f"Number of replaced values: {countreplace}\n")
 
 # Plot scatter plots of predicted vs. actual values
 plt.scatter(y_test, y_pred, alpha=0.5)

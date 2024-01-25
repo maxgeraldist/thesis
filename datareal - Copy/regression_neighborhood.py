@@ -11,7 +11,7 @@ pd.set_option("display.max_rows", None)
 plt.figure(figsize=(10, 8))
 
 # Read the data
-df = pd.read_excel("final.xlsx")
+df = pd.read_excel("final_with_neighborhoods.xlsx")
 
 # assign y and x, drop variables with high VIF
 y = df["rent"]
@@ -35,15 +35,16 @@ x = df.drop(
         "school2",
         "garbageincluded",
         "pets_allowed_deposit",
-        # "Lake View",
-        # "East Ukrainian Village",
-        # "View",
-        # "Near North",
-        # "South Loop",
-        # "Rogers Park",
-        # "Gold Coast",
-        # "Hyde Park",
-        # "Unknown",
+        "arrests",
+        "Lake View",
+        "East Ukrainian Village",
+        "View",
+        "Near North",
+        "South Loop",
+        "Rogers Park",
+        "Gold Coast",
+        "Hyde Park",
+        "Unknown",
     ],
     axis=1,
 )
@@ -54,11 +55,11 @@ from statsmodels.stats.outliers_influence import variance_inflation_factor
 vif = pd.DataFrame()
 vif["VIF Factor"] = [variance_inflation_factor(x.values, i) for i in range(x.shape[1])]
 vif["features"] = x.columns
-with open("OLS/vif.txt", "w") as f:
+with open("OLS/neighborhood_vif.txt", "w") as f:
     f.write(str(vif))
 
 matrix = x.corr()
-with open("OLS/matrix.txt", "w") as f:
+with open("OLS/neighborhood_matrix.txt", "w") as f:
     f.write(str(matrix))
 
 # Split the data into training and testing sets
@@ -104,7 +105,7 @@ model = sm.OLS(y_train, x_1).fit()
 x_test_BE = sm.add_constant(x_test)[list(x_1.columns)]
 
 summary_str = model.summary().as_text()
-with open("OLS/summary_OLS.txt", "w") as f:
+with open("OLS/neighborhood_summary_OLS.txt", "w") as f:
     f.write(summary_str)
 
 # Make predictions on the test data
@@ -122,12 +123,12 @@ for value in y_pred:
 plt.scatter(y_test, y_pred, alpha=0.5)
 plt.xlabel("Actual values")
 plt.ylabel("Predicted values")
-plt.savefig("OLS/predicted_vs_actual.png")
+plt.savefig("OLS/neighborhood_predicted_vs_actual.png")
 
 # Calculate and print the Mean Squared Error (MSE)
 mse = mean_squared_error(y_test, y_pred)
 print("MSE:", mse)
-with open("OLS/mse.txt", "w") as f:
+with open("OLS/neighborhood_mse.txt", "w") as f:
     f.write(str(mse))
 
 n = len(y_test)  # number of observations
@@ -136,17 +137,17 @@ p = x_test.shape[1]  # number of predictors
 # Calculate and print the Mean Squared Error of the Residuals (MSER)
 mser = mse / (n - p - 1)
 print("MSER:", mser)
-with open("OLS/mser.txt", "w") as f:
+with open("OLS/neighborhood_mser.txt", "w") as f:
     f.write(str(mser))
 
 # Calculate and print the R-squared score
 r2 = r2_score(y_test, y_pred)
 print("R-squared:", r2)
-with open("OLS/r2.txt", "w") as f:
+with open("OLS/neighborhood_r2.txt", "w") as f:
     f.write(str(r2))
 
 # Calculate and print the Adjusted R-squared score
 adj_r2 = 1 - (1 - r2) * (n - 1) / (n - p - 1)
 print("Adjusted R-squared:", adj_r2)
-with open("OLS/adj_r2.txt", "w") as f:
+with open("OLS/neighborhood_adj_r2.txt", "w") as f:
     f.write(str(adj_r2))
