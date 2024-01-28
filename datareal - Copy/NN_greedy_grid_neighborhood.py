@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 plt.figure(figsize=(10, 8))
 
 # Load the data
-df = pd.read_excel("final.xlsx")
+df = pd.read_excel("final_with_neighborhoods.xlsx")
 
 # Define features and target
 features = df.drop(["rent", "Index"], axis=1)
@@ -119,7 +119,7 @@ residuals = y_test - y_pred
 mse_residuals = mean_squared_error(y_test, residuals)
 print(f"Mean Squared Error of the residuals: {mse_residuals}")
 
-with open("NN/NNTuned.txt", "w") as f:
+with open("NN/neighborhood_NNTuned.txt", "w") as f:
     f.write(f"Mean Squared Error (MSE): {mse}\n")
     f.write(f"R^2 Score: {r2}\n")
     f.write(f"Best parameters: {best_params}\n")
@@ -132,4 +132,4 @@ with open("NN/NNTuned.txt", "w") as f:
 plt.scatter(y_test, y_pred, alpha=0.5)
 plt.xlabel("Actual Values")
 plt.ylabel("Predicted Values")
-plt.savefig("NN/scatter.png")
+plt.savefig("NN/neighborhood_scatter.png")

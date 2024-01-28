@@ -1,16 +1,15 @@
 # Import necessary modules
 import pandas as pd
-from sklearn.model_selection import train_test_split, GridSearchCV, KFold
+from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.neural_network import MLPRegressor
 from sklearn.metrics import mean_squared_error, r2_score
 import matplotlib.pyplot as plt
 
 plt.figure(figsize=(10, 8))
-
 # Load the data
 df = pd.read_excel("final_with_neighborhoods.xlsx")
-
+df = df.reset_index()
 # Define features and target
 features = df.drop(["rent", "Index"], axis=1)
 target = df["rent"]
@@ -28,7 +27,8 @@ x_test = scaler.transform(x_test)
 # Create a MLPRegressor object
 mlp = MLPRegressor(random_state=0, max_iter=100000, early_stopping=True)
 
-parameters = {
+# Grid search was solved in the other file - this is the result
+best_params = {
     "solver": "adam",
     "activation": "relu",
     "alpha": 0.0001,
@@ -44,21 +44,26 @@ parameters = {
     "epsilon": 1e-06,
 }
 
-# fit parameters into the model
-mlp.set_params(**parameters)
-
-# Now you can use the tuned model to make predictions
+# Set the best parameters
+mlp.set_params(**best_params)
 mlp.fit(x_train, y_train)
 y_pred = mlp.predict(x_test)
 
-# Delete predictions that are higher than the max rent
-maxrent = y_train.max()
-meanrent = y_train.mean()
-countreplace = 0
-for value in y_pred:
-    if value > maxrent:
-        y_pred[y_pred == value] = meanrent
-        countreplace += 1
+# Replace predicted outliers with the mean of the target
+y_pred[y_pred > (y_test.max() * 2)] = y_test.mean()
+
+
+# hiddenlayers = {(100), (500, 500), (500, 500, 500)}
+# # Chart loss over iterations for each hidden layers setting
+# for hiddenlayer in hiddenlayers:
+#     mlp.set_params(hidden_layer_sizes=hiddenlayer)
+#     mlp.fit(x_train, y_train)
+#     plt.plot(mlp.loss_curve_, label=hiddenlayer)
+# plt.xlabel("Iterations")
+# plt.ylabel("Loss")
+# plt.legend()
+# plt.savefig("NN/neighborhood_LossNN.png")
+# plt.clf()
 
 # Calculate the mean squared error
 mse = mean_squared_error(y_test, y_pred)
@@ -76,20 +81,15 @@ print(f"Adjusted R^2 Score: {adj_r2}")
 
 # Caluclate the mean squared error of the residuals
 residuals = y_test - y_pred
-mse_residuals = mean_squared_error(y_test, residuals)
-print(f"Mean Squared Error of the residuals: {mse_residuals}")
+
+# Plot the predicted vs actual values
+plt.scatter(y_test, y_pred, alpha=0.5)
+plt.xlabel("Actual Values")
+plt.ylabel("Predicted Values")
+plt.savefig("NN/neighborhood_ScatterNN.png")
 
 with open("NN/neighborhood_NNTuned.txt", "w") as f:
     f.write(f"Mean Squared Error (MSE): {mse}\n")
     f.write(f"R^2 Score: {r2}\n")
-    f.write(f"Best parameters: {best_params}\n")
-    f.write(f"Predicted values: {y_pred}\n")
-    f.write(f"Actual values: {y_test}\n")
-    f.write(f"Mean Squared Error of the residuals: {mse_residuals}\n")
     f.write(f"Adjusted R^2 Score: {adj_r2}\n")
-
-# Plot scatter plots of predicted vs. actual values
-plt.scatter(y_test, y_pred, alpha=0.5)
-plt.xlabel("Actual Values")
-plt.ylabel("Predicted Values")
-plt.savefig("NN/neighborhood_scatter.png")
+    f.write(f"Best parameters: {best_params}\n")

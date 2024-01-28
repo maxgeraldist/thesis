@@ -111,14 +111,6 @@ with open("OLS/neighborhood_summary_OLS.txt", "w") as f:
 # Make predictions on the test data
 y_pred = model.predict(x_test_BE)
 
-maxrent = y_train.max()
-meanrent = y_train.mean()
-countreplace = 0
-for value in y_pred:
-    if value > maxrent:
-        y_pred[y_pred == value] = meanrent
-        countreplace += 1
-
 # Plot predicted vs actual
 plt.scatter(y_test, y_pred, alpha=0.5)
 plt.xlabel("Actual values")

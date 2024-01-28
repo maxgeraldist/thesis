@@ -9,7 +9,7 @@ pd.set_option("display.max_columns", None)
 pd.set_option("display.max_rows", None)
 
 # Read the data
-df = pd.read_excel("final.xlsx")
+df = pd.read_excel("final_with_neighborhoods.xlsx")
 plt.figure(figsize=(10, 8))
 
 # Split the data into training and testing sets
@@ -40,15 +40,15 @@ p = x_test.shape[1]  # number of predictors
 r2 = r2_score(y_test, y_pred)
 
 
-feature_number = 10  # Change this to the number of features you want to display
+feature_number = 10
 featimp = pd.Series(rf_best.feature_importances_, index=x.columns).sort_values(
     ascending=False
 )
-# Slice the series to only include the first n features
+# Slice the series to only include the first feature_number features
 featemp = featimp[:feature_number]
 featemp.plot(kind="barh", title="Feature Importances")
 plt.ylabel("Feature Importance Score")
-plt.savefig("Random Forest/Feature_importance_RF_no_neighborhood.png")
+plt.savefig("Random Forest/Feature_importance_RF_with_neighborhood.png")
 plt.clf()
 
 # Apply The Full Featured Classifier To The Test Data
@@ -58,7 +58,7 @@ y_pred = rf_best.predict(x_test)
 residuals = y_test - y_pred
 
 # Apply The Full Featured Classifier To The Test Data
-with open("Random Forest/output_no_neighborhood.txt", "w") as file:
+with open("Random Forest/output_with_neighborhood.txt", "w") as file:
     # Calculate and write the MSE to the file
     mse = np.mean(residuals**2)
     file.write("Mean Squared Error: " + str(mse) + "\n")
@@ -87,4 +87,4 @@ with open("Random Forest/output_no_neighborhood.txt", "w") as file:
 plt.scatter(y_test, y_pred, alpha=0.5)
 plt.xlabel("Actual values")
 plt.ylabel("Predicted values")
-plt.savefig("Random Forest/Predicted_vs_actual_RF_no_neighborhood.png")
+plt.savefig("Random Forest/Predicted_vs_actual_RF_with_neighborhood.png")

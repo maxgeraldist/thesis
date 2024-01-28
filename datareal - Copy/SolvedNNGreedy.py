@@ -31,7 +31,7 @@ mlp = MLPRegressor(random_state=0, max_iter=100000, early_stopping=True)
 best_params = {
     "activation": "relu",
     "alpha": 0.0001,
-    "hidden_layer_sizes": (500, 500),
+    "hidden_layer_sizes": (500, 500, 500),
     "learning_rate": "constant",
     "learning_rate_init": 0.001,
     "solver": "adam",
@@ -40,6 +40,7 @@ best_params = {
     "beta_2": 0.999,
     "epsilon": 1e-07,
     "max_iter": 100000,
+    "random_state": 0,
 }
 
 # Set the best parameters
@@ -47,19 +48,21 @@ mlp.set_params(**best_params)
 mlp.fit(x_train, y_train)
 y_pred = mlp.predict(x_test)
 
-maxrent = y_train.max()
-meanrent = y_train.mean()
-countreplace = 0
-for value in y_pred:
-    if value > maxrent:
-        y_pred[y_pred == value] = meanrent
-        countreplace += 1
-
-
+# hiddenlayers = {(100), (500, 500), (500, 500, 500)}
+# # Chart loss over iterations for each hidden layers setting
+# for hiddenlayer in hiddenlayers:
+#     mlp.set_params(hidden_layer_sizes=hiddenlayer)
+#     mlp.fit(x_train, y_train)
+#     plt.plot(mlp.loss_curve_, label=hiddenlayer)
+# plt.xlabel("Iterations")
+# plt.ylabel("Loss")
+# plt.legend()
+# plt.savefig("NN/LossNN.png")
+# plt.clf()
+#
 # Calculate the mean squared error
 mse = mean_squared_error(y_test, y_pred)
 print(f"Mean Squared Error (MSE): {mse}")
-print(f"Number of replaced values: {countreplace}")
 
 # Calculate the R^2 score
 r2 = r2_score(y_test, y_pred)
@@ -80,7 +83,7 @@ print(f"Mean Squared Error of the residuals: {mse_residuals}")
 plt.scatter(y_test, y_pred, alpha=0.5)
 plt.xlabel("Actual Values")
 plt.ylabel("Predicted Values")
-plt.title("Scatter plot of Predicted vs Actual Values")
+plt.savefig("NN/ScatterNN.png")
 
 with open("NN/NNTuned.txt", "w") as f:
     f.write(f"Mean Squared Error (MSE): {mse}\n")
