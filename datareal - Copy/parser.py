@@ -1,7 +1,9 @@
+import re
+
 import numpy as np
 import pandas as pd
-import re
-from district_dict import neighborhood_to_pd, district_to_crime
+
+from district_dict import district_to_crime, neighborhood_to_pd
 
 df: pd.DataFrame = pd.read_excel("output.xlsx", sheet_name="Sheet1")
 df["commute"] = df["commute"].replace("^$", np.nan, regex=True)
@@ -26,7 +28,7 @@ def first_non_null(series):
 
 # Apply the function to the 'address' column within each group
 df["address"] = df["address"].combine_first(df["address-single"])
-df.drop("address-single", axis=1, inplace=True)
+df = df.drop("address-single", axis=1)
 df["address"] = df.groupby("page-href")["address"].transform(first_non_null)
 df["neighborhood"] = df.groupby("page-href")["neighborhood"].transform(first_non_null)
 df["Commute_rush"] = df.groupby("page-href")["Commute_rush"].transform(first_non_null)
@@ -169,7 +171,7 @@ df["lease_term"] = pd.to_numeric(df["lease_term"], errors="coerce").fillna(
 )  # imputing, see https://www.bls.gov/spotlight/2022/housing-leases-in-the-u-s-rental-market/home.htm
 
 df["application_fee"] = df["policies2"].str.extract("\$(\d+) application fee")
-df["application_fee_missing"] = df["application_fee"].isnull().astype(int)
+df["application_fee_missing"] = df["application_fee"].isna().astype(int)
 bins = np.arange(0, df["rent"].max() + 200, 200)
 df["rent_bracket"] = pd.cut(df["rent"], bins, include_lowest=True)
 df["application_fee"] = pd.to_numeric(df["application_fee"], errors="coerce")
@@ -183,7 +185,7 @@ df["application_fee"] = (
 )  # imputing per rent bracket, then by global mean
 df["deposit"] = df["preview"].str.replace(",", "").str.extract("Deposit \& fees\$(\d+)")
 df["deposit"] = pd.to_numeric(df["deposit"], errors="coerce")
-df["deposit_missing"] = df["deposit"].isnull().astype(int)
+df["deposit_missing"] = df["deposit"].isna().astype(int)
 df["deposit"] = (
     df["deposit"]
     .fillna(df.groupby("rent_bracket")["deposit"].transform("mean"))
@@ -339,7 +341,7 @@ df["hasfireplace"] = (
 )
 df["year_built"] = df["factsfeatures"].str.extract("Year built: (\d+)")
 df["year_built"] = (
-    df["year_built"].fillna(df["year_built"].notnull().mean()).astype(int)
+    df["year_built"].fillna(df["year_built"].notna().mean()).astype(int)
 )  # imputing
 
 

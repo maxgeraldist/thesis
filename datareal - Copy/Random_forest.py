@@ -1,9 +1,9 @@
-import pandas as pd
-from sklearn.metrics import r2_score, mean_squared_error
-from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestRegressor
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import mean_squared_error, r2_score
+from sklearn.model_selection import train_test_split
 
 pd.set_option("display.max_columns", None)
 pd.set_option("display.max_rows", None)

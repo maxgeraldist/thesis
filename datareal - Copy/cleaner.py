@@ -1,7 +1,8 @@
-import pandas as pd
 import re
+
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 
 df = pd.read_excel("testsheet.xlsx")
 pd.set_option("display.max_columns", None)
@@ -38,7 +39,7 @@ df["neighborhood"] = df["neighborhood"].combine_first(df["neighborhood-single"])
 
 # df['footage'] = df['footage-single'].combine_first(df['footage-plural'])
 df["factsfeatures"] = df["factsfeatures"].combine_first(df["ff2"])
-df.drop(
+df = df.drop(
     [
         "single-rent",
         "ff2",
@@ -62,7 +63,6 @@ df.drop(
         "page",
     ],
     axis=1,
-    inplace=True,
 )
 
 # Apply the function to the column
@@ -88,10 +88,10 @@ df = (
     .reset_index()
 )
 # Remove outliers
-q1 = df['rent'].quantile(0.25)
-q3 = df['rent'].quantile(0.75)
+q1 = df["rent"].quantile(0.25)
+q3 = df["rent"].quantile(0.75)
 iqr = q3 - q1
-df = df[~((df['rent'] < (q1 - 1.5 * iqr)) | (df['rent'] > (q3 + 1.5 * iqr)))]
+df = df[~((df["rent"] < (q1 - 1.5 * iqr)) | (df["rent"] > (q3 + 1.5 * iqr)))]
 
 print(df["rent"].describe())
 # Define the range bins

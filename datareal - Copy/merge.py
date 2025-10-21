@@ -1,6 +1,7 @@
-import pandas as pd
 import glob
 import os
+
+import pandas as pd
 
 # Define the directory to search for Excel files
 directory = os.getcwd()
@@ -29,7 +30,7 @@ def increment_counter(df_page, column, counter):
     df_page = df_page.copy()  # Add this line
     counter[column] = 1
     for i in df_page.index:
-        if pd.notnull(df_page.loc[i, column]):
+        if pd.notna(df_page.loc[i, column]):
             df_page.loc[i, "count" + column] = counter[column]
             counter[column] += 1
     return df_page
@@ -60,24 +61,24 @@ for page_href in page_hrefs:
 
 # Create the 'trueindex' column
 for column in counter.keys():
-    df.loc[df["count" + column].notnull(), "trueindex"] = (
+    df.loc[df["count" + column].notna(), "trueindex"] = (
         df["count" + column].astype(str) + df["page-href"]
     )
 
 # Group by 'trueindex', take the first row of each group, and sort by 'web-scraper-order'
 df1 = (
-    df[df["trueindex"].notnull()]
+    df[df["trueindex"].notna()]
     .groupby("trueindex")
     .first()
     .sort_values("web-scraper-order")
 )
 
 # Concatenate with the rows where 'trueindex' is null
-df2 = pd.concat([df1, df[df["trueindex"].isnull()]])
+df2 = pd.concat([df1, df[df["trueindex"].isna()]])
 
 # Concatenate with the rows where 'beds', 'baths', 'rent2', and 'footageplural' are all null
 df2 = pd.concat(
-    [df2, df[df[["beds", "baths", "rent2", "footageplural"]].isnull().all(axis=1)]]
+    [df2, df[df[["beds", "baths", "rent2", "footageplural"]].isna().all(axis=1)]]
 )
 
 df2.to_excel("testsheet.xlsx")

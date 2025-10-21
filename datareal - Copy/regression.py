@@ -1,11 +1,11 @@
-import pandas as pd
-import statsmodels.api as sm
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import mean_squared_error, r2_score
-from statsmodels.stats.diagnostic import het_breuschpagan
-import scipy.stats as stats
-from statsmodels.stats.outliers_influence import variance_inflation_factor
 import matplotlib.pyplot as plt
+import pandas as pd
+import scipy.stats as stats
+import statsmodels.api as sm
+from sklearn.metrics import mean_squared_error, r2_score
+from sklearn.model_selection import train_test_split
+from statsmodels.stats.diagnostic import het_breuschpagan
+from statsmodels.stats.outliers_influence import variance_inflation_factor
 
 pd.set_option("display.max_columns", None)
 pd.set_option("display.max_rows", None)
@@ -101,14 +101,14 @@ model_exog = sm.OLS(residuals, sm.add_constant(x_1)).fit()
 print(model_exog.summary())
 
 # Subset the test data to include only the selected features
-x_test_BE = sm.add_constant(x_test)[list(x_1.columns)]
+x_test_be = sm.add_constant(x_test)[list(x_1.columns)]
 
 summary_str = model.summary().as_text()
 with open("OLS/summary_OLS.txt", "w") as f:
     f.write(summary_str)
 
 # Make predictions on the test data
-y_pred = model.predict(x_test_BE)
+y_pred = model.predict(x_test_be)
 
 
 # Plot predicted vs actual

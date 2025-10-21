@@ -1,10 +1,10 @@
 # Import necessary modules
-import pandas as pd
-from sklearn.model_selection import train_test_split, GridSearchCV, KFold
-from sklearn.preprocessing import StandardScaler
-from sklearn.neural_network import MLPRegressor
-from sklearn.metrics import mean_squared_error, r2_score
 import matplotlib.pyplot as plt
+import pandas as pd
+from sklearn.metrics import mean_squared_error, r2_score
+from sklearn.model_selection import GridSearchCV, KFold, train_test_split
+from sklearn.neural_network import MLPRegressor
+from sklearn.preprocessing import StandardScaler
 
 plt.figure(figsize=(10, 8))
 

@@ -1,6 +1,6 @@
-import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 
 # Read the Excel files
 df1 = pd.read_excel("features_neighborhoods.xlsx")
@@ -8,19 +8,19 @@ df2 = pd.read_excel("features_no_neighborhoods.xlsx")
 
 # Strip leading and trailing spaces from 'labels' column
 df1["labels"] = df1["labels"].str.strip()
-df1.sort_values("importances", inplace=True, ascending=False)
+df1 = df1.sort_values("importances", ascending=False)
 df1 = df1.head(10)  # Get the top 10 features
 df2["labels"] = df2["labels"].str.strip()
-df2.sort_values("importances", inplace=True, ascending=False)
+df2 = df2.sort_values("importances", ascending=False)
 df2 = df2.head(10)  # Get the top 10 features
 
 # Merge the two dataframes on the feature names using an inner merge
-df = pd.merge(df1, df2, on="labels", how="inner")
+df = df1.merge(df2, on="labels", how="inner")
 
 print(df)
 
 # Sort the dataframe by the importances from the first model
-df.sort_values("importances_x", ascending=False, inplace=True)
+df = df.sort_values("importances_x", ascending=False)
 
 # Get the feature names and importances
 features = df["labels"].tolist()
